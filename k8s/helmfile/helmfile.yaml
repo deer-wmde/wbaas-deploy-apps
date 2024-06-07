@@ -237,6 +237,10 @@ releases:
     chart: ./../../charts/istio-service-mesh
     <<: *default_release
 
+  - name: argocd-config
+    namespace: argocd
+    chart: ../../charts/argocd-config
+
   ################################
   # LOCAL ONLY
   ################################
