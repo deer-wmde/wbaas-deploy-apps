@@ -1,0 +1,34 @@
+grafana:
+  enabled: true
+  ingress:
+    enabled: true
+    hosts:
+      - grafana.wbaas.localhost
+    paths:
+      - path: /
+        pathType: Prefix
+    annotations:
+      kubernetes.io/ingress.class: nginx
+
+prometheus:
+  prometheusSpec:
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "0.1Gi"
+      limits:
+        cpu: "100m"
+        memory: "0.1Gi"
+    image:
+      registry: quay.io
+      repository: prometheus/prometheus
+      tag: v2.49.1
+
+  ingress:
+    enabled: true
+    hosts:
+      - prometheus.wbaas.localhost
+    paths:
+      - /
+    annotations:
+      kubernetes.io/ingress.class: nginx

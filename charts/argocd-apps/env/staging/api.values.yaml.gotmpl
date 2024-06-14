@@ -1,0 +1,69 @@
+image:
+  tag: 10x.8.1
+
+replicaCount:
+  web: 1
+  backend: 2
+  scheduler: 1
+  queue: 2
+
+ingress:
+  tls:
+  - hosts:
+    - wikibase.dev ## todo should be injected
+    secretName: wikibase-dev-tls
+
+platform:
+  backendMwHost: mediawiki-139-app-backend.default.svc.cluster.local
+
+wbstack:
+  wikiDbProvisionVersion: mw1.39-wbs1
+  wikiDbUseVersion: mw1.39-wbs1
+  monitoringEmail: "wb-cloud-monitoring+staging@wikimedia.de"
+  elasticSearch:
+    enabledByDefault: true
+  contact:
+    mail:
+      recipient: contact.wikibase@wikimedia.de
+      sender: contact-<subject>@wikibase.dev
+
+app:
+  name: WBaaS Wikibase Dev
+  env: staging
+  logLevel: info
+  redis:
+    prefix: wikibase_dev_api
+  mail:
+    mailer: {{ .Values.services.app.mailer }} # mailgun/log https://laravel.com/docs/8.x/mail
+    fromaddress: noreply@wikibase.dev
+    fromname: Wikibase-dev
+    smtpUserSecretName: smtp-credentials
+    smtpUserSecretKey: username
+    smtpPasswordSecretName: smtp-credentials
+    smtpPasswordSecretKey: password
+    smtphost: smtp.eu.mailgun.org
+    smtpport: 587
+  recaptcha:
+    minScore: 0.5
+    secretSecretName: {{ .Values.external.recaptcha3.secretName }}
+    secretSecretKey: secret_key
+  elasticSearchHost: elasticsearch-1.default.svc.cluster.local:9200
+  elasticSearchSharedIndexHost: elasticsearch-2.default.svc.cluster.local:9200
+  elasticSearchSharedIndexPrefix: wiki_1
+
+trustedProxy:
+  proxies: ['10.112.0.0/14']
+
+storage:
+  url: https://storage.googleapis.com/wikibase-dev-static
+  accessKeySecretName: public-assets-hmac-key
+  secretKeySecretName: public-assets-hmac-key
+
+resources:
+  queue:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 250m
+      memory: 512Mi

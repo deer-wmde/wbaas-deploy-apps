@@ -1,0 +1,29 @@
+peerAuthentication:
+  enabled: true
+  objects:
+    - metadata:
+        name: disable-mtls
+        namespace: default
+      spec:
+        mtls:
+          mode: DISABLE
+
+podMonitor:
+  namespace: monitoring
+
+serviceMonitor:
+  namespace: monitoring
+
+istiod:
+  pilot:
+    resources:
+      requests:
+        cpu: 125m
+        memory: 256Mi
+
+  global:
+    proxy:
+      resources:
+        limits:
+          cpu: 125m
+          memory: 128Mi

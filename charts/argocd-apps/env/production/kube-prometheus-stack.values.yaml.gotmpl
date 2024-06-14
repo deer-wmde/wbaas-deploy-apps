@@ -1,0 +1,54 @@
+prometheusOperator:
+  resources:
+    limits:
+      cpu: 200m
+      memory: 200Mi
+    requests:
+      cpu: 100m
+      memory: 100Mi
+
+prometheus:
+  prometheusSpec:
+    image:
+      registry: gke.gcr.io
+      repository: prometheus-engine/prometheus
+      tag: v2.41.0-gmp.9-gke.0
+
+alertmanager:
+  enabled: false
+
+grafana:
+  enabled: false
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+kube-state-metrics:
+  namespacesDenylist: 'qs-jobs'
+
+# turning off most k8s component scraping as we are not
+# interested right now
+kubeScheduler:
+  enabled: false
+kubeApiServer:
+  enabled: false
+kubelet:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+coreDns:
+  enabled: false
+kubeDns:
+  enabled: false
+kubeEtcd:
+  enabled: false
+kubeProxy:
+  enabled: false
+kubeStateMetrics:
+  enabled: true
+nodeExporter:
+  enabled: false

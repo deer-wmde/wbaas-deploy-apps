@@ -1,0 +1,73 @@
+image:
+  tag: 10x.8.1
+
+ingress:
+  tls: null
+
+platform:
+  backendMwHost: mediawiki-139-app-backend.default.svc.cluster.local
+
+wbstack:
+  wikiDbProvisionVersion: mw1.39-wbs1
+  wikiDbUseVersion: mw1.39-wbs1
+  maxWikisPerUser: null
+  elasticSearch:
+    enabledByDefault: true
+  contact:
+    mail:
+      recipient: someone@wikimedia.de
+      sender: contact-<subject>@wikibase.cloud
+
+app:
+  name: WBaaS Localhost
+  env: local
+  logLevel: debug
+  redis:
+    prefix: wikibase_dev_api
+  mail:
+    fromaddress: noreply-local@fake.wikibase.dev
+    fromname: Wikibase-dev
+    smtphost: mailhog
+    smtpport: 1025
+    smtpencryption: null
+    smtpUserSecretName: null
+    smtpUserSecretKey: username
+    smtpPasswordSecretName: null
+    smtpPasswordSecretKey: password
+  recaptcha:
+    minScore: 0.5
+    secretSecretName: {{ .Values.external.recaptcha3.secretName }}
+    secretSecretKey: secret_key
+  # TODO is this needed for local?
+  gce:
+    serviceAccountSecret: null
+  stackdriver:
+    enabled: false
+  elasticSearchHost: elasticsearch-1.default.svc.cluster.local:9200
+  elasticSearchClusterWithoutSharedIndex: all
+
+replicaCount:
+  web: 1
+  backend: 1
+  scheduler: 1
+  queue: 2
+
+storage:
+  accessKeySecretName: minio-credentials
+  accessKeySecretKey: rootUser
+  secretKeySecretName: minio-credentials
+  secretKeySecretKey: rootPassword
+  endpoint: http://minio.default.svc.cluster.local:9000
+  url: http://minio.wbaas.localhost/api-assets
+
+trustedProxy:
+  proxies: ['*']
+
+resources:
+  queue:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 250m
+      memory: 512Mi

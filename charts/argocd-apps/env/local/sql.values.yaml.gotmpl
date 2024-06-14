@@ -1,0 +1,144 @@
+architecture: replication
+
+auth:
+  forcePassword: true
+  existingSecret: sql-secrets-passwords
+
+primary:
+  resources:
+    requests:
+      cpu: 750m
+      memory: 1000Mi
+    limits:
+      cpu: 750m
+      memory: 1000Mi
+    # storage: 1Gi
+  configuration: |-
+    [mysqld]
+    skip-name-resolve
+    explicit_defaults_for_timestamp
+    basedir=/opt/bitnami/mariadb
+    plugin_dir=/opt/bitnami/mariadb/plugin
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    tmpdir=/opt/bitnami/mariadb/tmp
+    max_allowed_packet=16M
+    bind-address=0.0.0.0
+    pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+    log-error=/opt/bitnami/mariadb/logs/mysqld.log
+    character-set-server=UTF8
+    collation-server=utf8_general_ci
+
+    # Custom
+    # 16MB, default is 8MB, bitnami was 128
+    key_buffer_size=16777216
+    # 67MB, default & bitnami was 134MB (134217728)
+    innodb_buffer_pool_size=67108864
+    # 8MB, default & bitnami was 16MB (16777216)
+    tmp_table_size=8388608
+    # 80, default & bitnami was 151
+    max_connections=80
+    # 7 days, default & bitnami is 0 (keep forever.)
+    expire_logs_days=7
+    # 100MB, default & bitnami was 1GB (1073741824)
+    max_binlog_size=107374182
+
+    # T348842
+    table_open_cache=4096
+    table_definition_cache=4096
+
+    [mysql]
+    # https://forums.mysql.com/read.php?103,189835,192421#msg-192421
+    default-character-set=UTF8
+
+    [client]
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    plugin_dir=/opt/bitnami/mariadb/plugin
+
+    [manager]
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+
+secondary:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 750m
+      memory: 900Mi
+    limits:
+      cpu: 750m
+      memory: 900Mi
+  readinessProbe:
+    enabled: false
+  customReadinessProbe:
+        initialDelaySeconds: 20
+        periodSeconds: 10
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 1
+        exec:
+          command:
+            - /bin/bash
+            - -ec
+            - |-
+              REPLICATION_THRESHOLD=60
+              PASSWORD_AUX="${MARIADB_MASTER_ROOT_PASSWORD:-}"
+              if [ -f "${MARIADB_MASTER_ROOT_PASSWORD_FILE:-}" ]; then
+                  PASSWORD_AUX=$(cat $MARIADB_MASTER_ROOT_PASSWORD_FILE)
+              fi
+              SECONDS_BEHIND=$(mysql -e "show slave status\G" -uroot -p$PASSWORD_AUX | grep "Seconds_Behind_Master" | awk '{print $2}')
+              SECONDS_BEHIND=${SECONDS_BEHIND%.*}
+              if [[ $SECONDS_BEHIND = "NULL" ]];
+              then
+                echo "Replication isn't running yet got NULL seconds behind primary!"
+                exit 1;
+              elif [[ ${SECONDS_BEHIND} =~ ^-?[0-9]+$ && $REPLICATION_THRESHOLD -gt ${SECONDS_BEHIND} ]];
+              then
+                exit 0;
+              else
+                echo "More than $REPLICATION_THRESHOLD seconds behind primary"
+                exit 1;
+              fi
+  configuration: |-
+    [mysqld]
+    skip-name-resolve
+    explicit_defaults_for_timestamp
+    basedir=/opt/bitnami/mariadb
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    tmpdir=/opt/bitnami/mariadb/tmp
+    max_allowed_packet=16M
+    bind-address=0.0.0.0
+    pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+    log-error=/opt/bitnami/mariadb/logs/mysqld.log
+    character-set-server=UTF8
+    collation-server=utf8_general_ci
+
+    # Custom
+    # 16MB, default is 8MB, bitnami was 128
+    key_buffer_size=16777216
+    # 67MB, default & bitnami was 134MB (134217728)
+    innodb_buffer_pool_size=67108864
+    # 8MB, default & bitnami was 16MB (16777216)
+    tmp_table_size=8388608
+    # 80, default & bitnami was 151
+    max_connections=80
+    # 7 days, default & bitnami is 0 (keep forever.)
+    expire_logs_days=7
+    # 100MB, default & bitnami was 1GB (1073741824)
+    max_binlog_size=107374182
+
+    [mysql]
+    # https://forums.mysql.com/read.php?103,189835,192421#msg-192421
+    default-character-set=UTF8
+
+    [client]
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+
+    [manager]
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
