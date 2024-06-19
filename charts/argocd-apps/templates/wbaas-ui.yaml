@@ -10,14 +10,16 @@ spec:
     namespace: default
     server: {{ .Values.spec.destination.server }}
   project: default
-  source:
-    path: charts/ui
-    repoURL: https://github.com/wbstack/charts
-    targetRevision: HEAD
-    helm:
-      valueFiles:
-        - env/production/ui.values.yaml.gotmpl
-        - env/local/ui.values.yaml.gotmpl
+  sources:
+    - path: charts/ui
+      repoURL: https://github.com/wbstack/charts
+      targetRevision: HEAD
+      helm:
+        valueFiles:
+          - $deploy/charts/argocd-apps/env/production/ui.values.yaml.gotmpl
+          - $deploy/charts/argocd-apps/env/local/ui.values.yaml.gotmpl
+    - repoURL: https://github.com/deer-wmde/wbaas-deploy-apps
+      ref: deploy
   syncPolicy:
     automated:
       prune: true
