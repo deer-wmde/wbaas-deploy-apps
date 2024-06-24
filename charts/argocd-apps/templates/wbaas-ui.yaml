@@ -16,10 +16,10 @@ spec:
       targetRevision: HEAD
       helm:
         valueFiles:
-          - $deploy/charts/argocd-apps/env/production/base.values.yaml.gotmpl
-          - $deploy/charts/argocd-apps/env/production/private.values.yaml.gotmpl
-          - $deploy/charts/argocd-apps/env/local/base.values.yaml.gotmpl
-          - $deploy/charts/argocd-apps/env/local/private.values.yaml.gotmpl
+          - $deploy/charts/argocd-apps/env/production/base.values.yaml
+          - $deploy/charts/argocd-apps/env/production/private.values.yaml
+          - $deploy/charts/argocd-apps/env/local/base.values.yaml
+          - $deploy/charts/argocd-apps/env/local/private.values.yaml
           - $deploy/charts/argocd-apps/env/production/ui.values.yaml.gotmpl
           - $deploy/charts/argocd-apps/env/local/ui.values.yaml.gotmpl
     - repoURL: https://github.com/deer-wmde/wbaas-deploy-apps
