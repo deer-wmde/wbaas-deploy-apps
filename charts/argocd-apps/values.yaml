@@ -61,3 +61,5 @@ external:
     secretName: recaptcha-v2-secrets
   recaptcha3:
     secretName: recaptcha-v3-secrets
+
+bar: "foo"
