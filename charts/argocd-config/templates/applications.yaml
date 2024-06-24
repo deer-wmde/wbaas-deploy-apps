@@ -10,3 +10,7 @@ spec:
     path: charts/argocd-apps
     repoURL: {{ .Values.repoUrls.main }}
     targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
