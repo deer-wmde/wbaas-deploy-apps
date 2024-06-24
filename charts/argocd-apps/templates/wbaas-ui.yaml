@@ -16,10 +16,6 @@ spec:
       targetRevision: HEAD
       helm:
         valuesObject: |
-{{ tpl (.Files.Get "env/production/base.yaml") . | indent 8 }}
-{{ tpl (.Files.Get "env/production/private.yaml") . | indent 8 }}
-{{ tpl (.Files.Get "env/local/base.yaml") . | indent 8 }}
-{{ tpl (.Files.Get "env/local/private.yaml") . | indent 8 }}
 {{ tpl (.Files.Get "env/production/ui.values.yaml.gotmpl") . | indent 8 }}
 {{ tpl (.Files.Get "env/local/ui.values.yaml.gotmpl") . | indent 8 }}
     - repoURL: https://github.com/deer-wmde/wbaas-deploy-apps
