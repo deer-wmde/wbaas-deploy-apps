@@ -20,5 +20,4 @@ spec:
 {{ tpl (.Files.Get "env/local/api.values.yaml.gotmpl") . | indent 8 }}
   syncPolicy:
     automated:
-      prune: true
       selfHeal: true
