@@ -14,3 +14,11 @@ spec:
     path: charts/api
     repoURL: https://github.com/wbstack/charts
     targetRevision: HEAD
+    helm:
+      valuesObject:
+{{ tpl (.Files.Get "env/production/api.values.yaml.gotmpl") . | indent 8 }}
+{{ tpl (.Files.Get "env/local/api.values.yaml.gotmpl") . | indent 8 }}
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
