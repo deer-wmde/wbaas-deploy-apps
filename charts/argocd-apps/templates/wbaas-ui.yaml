@@ -15,7 +15,7 @@ spec:
       repoURL: https://github.com/wbstack/charts
       targetRevision: HEAD
       helm:
-        values: |
+        valuesObject: |
 {{ tpl (.Files.Get "env/production/base.yaml") . | indent 8 }}
 {{ tpl (.Files.Get "env/production/private.yaml") . | indent 8 }}
 {{ tpl (.Files.Get "env/local/base.yaml") . | indent 8 }}
