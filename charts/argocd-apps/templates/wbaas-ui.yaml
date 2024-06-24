@@ -16,11 +16,7 @@ spec:
       targetRevision: HEAD
       helm:
         valueFiles:
-          # - $deploy/charts/argocd-apps/env/production/ui.values.yaml.gotmpl
           - $deploy/charts/argocd-apps/env/local/ui.values.yaml.gotmpl
-        # parameters:
-        #   - name: ui.recaptchaSitekeySecretName
-        #     value: "{{ .Values.external.recaptcha3.secretName }}"
     - repoURL: https://github.com/deer-wmde/wbaas-deploy-apps
       ref: deploy
   syncPolicy:
