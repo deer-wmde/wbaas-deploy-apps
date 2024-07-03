@@ -16,7 +16,7 @@ spec:
     targetRevision: HEAD
     helm:
       values: |
-        foo: bar
+{{ toYaml .Values | indent 8 }}
       valuesObject:
 {{ tpl (.Files.Get "env/production/ui.values.yaml.gotmpl") . | indent 8 }}
 {{ if eq .Values.environment "staging" }}
