@@ -10,6 +10,9 @@ spec:
     path: charts/argocd-apps
     repoURL: {{ .Values.repoUrls.main }}
     targetRevision: HEAD
+    helm:
+      values: |
+{{ toYaml .Values | indent 8 }}
   syncPolicy:
     automated:
       prune: true
