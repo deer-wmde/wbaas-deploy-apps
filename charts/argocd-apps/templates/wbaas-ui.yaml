@@ -17,7 +17,12 @@ spec:
     helm:
       valuesObject:
 {{ tpl (.Files.Get "env/production/ui.values.yaml.gotmpl") . | indent 8 }}
+{{ if eq .Values.environment "staging" }}
 {{ tpl (.Files.Get "env/local/ui.values.yaml.gotmpl") . | indent 8 }}
+{{ else if eq .Values.environment "local" }}
+{{ tpl (.Files.Get "env/local/ui.values.yaml.gotmpl") . | indent 8 }}
+{{ end }}
+
   syncPolicy:
     automated:
       selfHeal: true
